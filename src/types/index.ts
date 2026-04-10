@@ -33,3 +33,19 @@ export type AmnesiaScore = {
   totalTracksAnalyzed: number
   ghostCount: number
 }
+
+// Raw track object as Spotify returns it
+export type SpotifyTrack = {
+  id: string
+  name: string
+  artists: { name: string }[]
+  album: { images: { url: string }[] }
+  duration_ms: number
+  external_urls: { spotify: string }
+}
+
+// Raw recently played object as Spotify returns it
+export type SpotifyRecentItem = {
+  track: SpotifyTrack
+  played_at: string
+}
