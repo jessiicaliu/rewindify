@@ -14,23 +14,35 @@ export async function GET() {
 
   const userId = session.user.email
 
-  // Check cache first
-  const cached = await getGhostSongs(userId)
-  if (cached.length > 0) {
-    return NextResponse.json({ ghostSongs: cached, fromCache: true })
+  try {
+    // Check cache first
+    const cached = await getGhostSongs(userId)
+    if (cached.length > 0) {
+      return NextResponse.json({ ghostSongs: cached, fromCache: true })
+    }
+  } catch {
+    // Cache miss or table doesn't exist yet — fall through to Spotify
   }
 
-  // Nothing cached — call Spotify
-  const [longTerm, mediumTerm, recent] = await Promise.all([
-    getTopTracks(session.accessToken, "long_term"),
-    getTopTracks(session.accessToken, "medium_term"),
-    getRecentlyPlayed(session.accessToken),
-  ])
+  try {
+    const [longTerm, mediumTerm, recent] = await Promise.all([
+      getTopTracks(session.accessToken, "long_term"),
+      getTopTracks(session.accessToken, "medium_term"),
+      getRecentlyPlayed(session.accessToken),
+    ])
 
-  const ghostSongs = calculateGhostSongs(longTerm, mediumTerm, recent)
-  const amnesiaScore = calculateAmnesiaScore(longTerm.length, ghostSongs.length)
+    const ghostSongs = calculateGhostSongs(longTerm, mediumTerm, recent)
+    const amnesiaScore = calculateAmnesiaScore(longTerm.length, ghostSongs.length)
 
-  await saveGhostSongs(userId, ghostSongs)
+    try {
+      await saveGhostSongs(userId, ghostSongs)
+    } catch {
+      // Non-fatal — return results even if caching fails
+    }
 
-  return NextResponse.json({ ghostSongs, amnesiaScore, fromCache: false })
+    return NextResponse.json({ ghostSongs, amnesiaScore, fromCache: false })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error"
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
 }
