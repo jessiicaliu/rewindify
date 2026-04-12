@@ -1,6 +1,7 @@
+import { Track, SpotifyTrack } from "@/types"
+
 const SPOTIFY_BASE = "https://api.spotify.com/v1"
 
-// Every request to Spotify needs this
 async function spotifyFetch(endpoint: string, accessToken: string) {
   const res = await fetch(`${SPOTIFY_BASE}${endpoint}`, {
     headers: { Authorization: `Bearer ${accessToken}` },
@@ -9,11 +10,22 @@ async function spotifyFetch(endpoint: string, accessToken: string) {
   return res.json()
 }
 
+export function formatTrack(item: SpotifyTrack): Track {
+  return {
+    id: item.id,
+    name: item.name,
+    artist: item.artists[0].name,
+    albumArt: item.album.images[0]?.url ?? "",
+    durationMs: item.duration_ms,
+    spotifyUrl: item.external_urls.spotify,
+  }
+}
+
 // Top songs
 // range: short = last 4 weeks, medium = 6 months, long = all time
-export async function getTopTracks(accessToken: string, range: "short_term" | "medium_term" | "long_term") {
+export async function getTopTracks(accessToken: string, range: "short_term" | "medium_term" | "long_term"): Promise<Track[]> {
   const data = await spotifyFetch(`/me/top/tracks?time_range=${range}&limit=50`, accessToken)
-  return data.items
+  return data.items.map(formatTrack)
 }
 
 // Last 50 songs the user played
