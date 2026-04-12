@@ -1,3 +1,12 @@
+import { DefaultSession } from "next-auth"
+
+declare module "next-auth" {
+  interface Session {
+    accessToken: string
+    user: DefaultSession["user"]
+  }
+}
+
 // A single song/track from Spotify
 export type Track = {
   id: string
