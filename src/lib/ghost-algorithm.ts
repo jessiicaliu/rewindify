@@ -1,15 +1,4 @@
-import { GhostSong, Track, SpotifyTrack, SpotifyRecentItem } from "@/types"
-
-function formatTrack(item: SpotifyTrack): Track {
-  return {
-    id: item.id,
-    name: item.name,
-    artist: item.artists[0].name,
-    albumArt: item.album.images[0]?.url ?? "", // gets the album image URL and falls back to an empty string if it’s missing
-    durationMs: item.duration_ms,
-    spotifyUrl: item.external_urls.spotify,
-  }
-}
+import { GhostSong, Track, SpotifyRecentItem } from "@/types"
 
 function getVanishReason(daysSinceHeard: number): string {
   if (daysSinceHeard < 30) return "Fading fast"
@@ -20,19 +9,19 @@ function getVanishReason(daysSinceHeard: number): string {
 }
 
 export function calculateGhostSongs(
-  longTermTracks: SpotifyTrack[],
-  mediumTermTracks: SpotifyTrack[],
+  longTermTracks: Track[],
+  mediumTermTracks: Track[],
   recentTracks: SpotifyRecentItem[]
 ): GhostSong[] {
   const recentIds = new Set(recentTracks.map((item) => item.track.id))
   const mediumIds = new Set(mediumTermTracks.map((t) => t.id))
 
   const ghosts = longTermTracks
-    .filter((track) => mediumIds.has(track.id) && !recentIds.has(track.id)) // songs in long and medium but not recent
-    .map((track, index) => { // for each ghost song, create a new object
+    .filter((track) => mediumIds.has(track.id) && !recentIds.has(track.id))
+    .map((track, index) => {
       const daysSinceHeard = Math.floor(Math.random() * 500) + 90
       return {
-        ...formatTrack(track),
+        ...track,
         peakPosition: index + 1,
         peakDate: "2022",
         totalPlays: Math.floor(Math.random() * 300) + 50,
