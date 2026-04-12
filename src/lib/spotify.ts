@@ -1,4 +1,4 @@
-import { Track, SpotifyTrack, Artist, SpotifyArtist } from "@/types"
+import { Track, SpotifyTrack, Artist, SpotifyArtist, NowPlayingTrack } from "@/types"
 
 const SPOTIFY_BASE = "https://api.spotify.com/v1"
 
@@ -52,6 +52,26 @@ export function formatArtist(item: SpotifyArtist): Artist {
     image: item.images[0]?.url ?? "",
     genres: item.genres ?? [],
     spotifyUrl: item.external_urls.spotify,
+  }
+}
+
+// Currently playing track — returns null if nothing is playing
+export async function getNowPlaying(accessToken: string): Promise<NowPlayingTrack | null> {
+  const res = await fetch(`${SPOTIFY_BASE}/me/player/currently-playing`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  })
+  if (res.status === 204 || !res.ok) return null
+  const data = await res.json()
+  if (!data?.item) return null
+  return {
+    id: data.item.id,
+    name: data.item.name,
+    artist: data.item.artists[0].name,
+    albumArt: data.item.album.images[0]?.url ?? "",
+    spotifyUrl: data.item.external_urls.spotify,
+    isPlaying: data.is_playing,
+    progressMs: data.progress_ms,
+    durationMs: data.item.duration_ms,
   }
 }
 

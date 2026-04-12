@@ -5,6 +5,8 @@ const SPOTIFY_SCOPES = [
   "user-top-read",
   "user-read-recently-played",
   "user-read-email",
+  "user-read-currently-playing",
+  "user-read-playback-state",
 ].join(" ")
 
 export const authOptions: NextAuthOptions = {

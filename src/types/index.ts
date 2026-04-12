@@ -74,6 +74,18 @@ export type SpotifyRecentItem = {
   played_at: string
 }
 
+// Currently playing track
+export type NowPlayingTrack = {
+  id: string
+  name: string
+  artist: string
+  albumArt: string
+  spotifyUrl: string
+  isPlaying: boolean
+  progressMs: number
+  durationMs: number
+}
+
 // Raw artist object as Spotify returns it
 export type SpotifyArtist = {
   id: string
