@@ -5,6 +5,7 @@ import { getTopTracks, getRecentlyPlayed } from "@/lib/spotify"
 import { calculateGhostSongs, calculateAmnesiaScore } from "@/lib/ghost-algorithm"
 import GhostSongsList from "@/components/GhostSongsList"
 import AmnesiaScore from "@/components/AmnesiaScore"
+import StatCard from "@/components/ui/StatCard"
 
 export default async function GhostSongsPage() {
   const session = await getServerSession(authOptions)
@@ -27,6 +28,11 @@ export default async function GhostSongsPage() {
       <div className="mb-10">
         <h1 className="text-3xl font-bold mb-1">Ghost Songs</h1>
         <p className="text-white/50 text-sm">Songs you loved and forgot.</p>
+      </div>
+      <div className="grid grid-cols-3 gap-3 mb-8">
+        <StatCard label="Analyzed" value={amnesiaScore.totalTracksAnalyzed} sub="all-time tracks" />
+        <StatCard label="Forgotten" value={amnesiaScore.ghostCount} sub="ghost songs" />
+        <StatCard label="Score" value={`${amnesiaScore.score}%`} sub="amnesia rate" />
       </div>
       <AmnesiaScore score={amnesiaScore} />
       <GhostSongsList songs={ghostSongs} />
