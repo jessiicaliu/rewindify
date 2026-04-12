@@ -1,56 +1,57 @@
+export const dynamic = "force-dynamic"
+
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import { getTopTracks } from "@/lib/spotify"
-import { Track } from "@/types"
-import DatePicker from "./DatePicker"
-import PastStationGrid from "@/components/PastStationGrid"
-import { Suspense } from "react"
+import EraCard from "@/components/ui/EraCard"
 
-interface Props {
-  searchParams: Promise<{ year?: string; month?: string }>
-}
-
-export default async function PastStationPage({ searchParams }: Props) {
+export default async function PastStationPage() {
   const session = await getServerSession(authOptions)
 
   if (!session?.accessToken) {
     redirect("/")
   }
 
-  const { year: yearStr, month: monthStr } = await searchParams
-  const year = yearStr ? parseInt(yearStr) : null
-  const month = monthStr ? parseInt(monthStr) : null
+  const [shortTerm, mediumTerm, longTerm] = await Promise.all([
+    getTopTracks(session.accessToken, "short_term"),
+    getTopTracks(session.accessToken, "medium_term"),
+    getTopTracks(session.accessToken, "long_term"),
+  ])
 
-  let tracks: Track[] = []
+  const shortIds = new Set(shortTerm.map((t) => t.id))
+  const mediumIds = new Set(mediumTerm.map((t) => t.id))
+  const longIds = new Set(longTerm.map((t) => t.id))
 
-  if (year && month) {
-    const currentYear = new Date().getFullYear()
-    const currentMonth = new Date().getMonth() + 1
-    const monthsAgo = (currentYear - year) * 12 + (currentMonth - month)
-
-    const range = monthsAgo <= 4 ? "short_term" : monthsAgo <= 12 ? "medium_term" : "long_term"
-    tracks = await getTopTracks(session.accessToken, range)
-  }
+  const rising = shortTerm.filter((t) => !longIds.has(t.id))
+  const timeless = shortTerm.filter((t) => mediumIds.has(t.id) && longIds.has(t.id))
+  const fading = longTerm.filter((t) => !shortIds.has(t.id))
 
   return (
-    <main className="min-h-screen bg-black text-white px-4 py-10 max-w-4xl mx-auto">
+    <main className="min-h-screen bg-black text-white px-4 py-10 max-w-2xl mx-auto">
       <div className="mb-10">
         <h1 className="text-3xl font-bold mb-1">Past Station</h1>
-        <p className="text-white/50 text-sm">What were you listening to back then?</p>
+        <p className="text-white/50 text-sm">How your taste is shifting.</p>
       </div>
 
-      <Suspense>
-        <DatePicker />
-      </Suspense>
-
-      {!year || !month ? (
-        <p className="text-white/30 text-sm text-center py-16">Pick a year and month to tune in.</p>
-      ) : tracks.length === 0 ? (
-        <p className="text-white/30 text-sm text-center py-16">No data found for that period.</p>
-      ) : (
-        <PastStationGrid tracks={tracks} year={year} month={month} />
-      )}
+      <EraCard
+        title="Rising"
+        description="Songs you've been playing lately that weren't in your long-term rotation."
+        tracks={rising}
+        accent="text-green-400"
+      />
+      <EraCard
+        title="Timeless"
+        description="Songs that have been in your top tracks across all time periods."
+        tracks={timeless}
+        accent="text-violet-400"
+      />
+      <EraCard
+        title="Fading"
+        description="Songs you used to play constantly but have drifted away from."
+        tracks={fading}
+        accent="text-amber-400"
+      />
     </main>
   )
 }
