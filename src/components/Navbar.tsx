@@ -7,11 +7,11 @@ export default function Navbar() {
         Rewindify
       </Link>
       <div className="flex items-center gap-6">
-        <Link href="/ghost-songs" className="text-sm text-white/40 hover:text-white transition-colors">
-          Ghost Songs
+        <Link href="/songs" className="text-sm text-white/40 hover:text-white transition-colors">
+          Songs
         </Link>
-        <Link href="/past-station" className="text-sm text-white/40 hover:text-white transition-colors">
-          Past Station
+        <Link href="/artists" className="text-sm text-white/40 hover:text-white transition-colors">
+          Artists
         </Link>
         <a href="/api/auth/signout" className="text-sm text-white/40 hover:text-white transition-colors">
           Sign out

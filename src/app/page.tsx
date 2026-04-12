@@ -42,18 +42,18 @@ export default async function Home() {
 
       <div className="grid grid-cols-2 gap-4">
         <Link
-          href="/ghost-songs"
+          href="/songs"
           className="rounded-2xl bg-white/5 hover:bg-white/10 transition-colors p-6 group"
         >
-          <p className="text-lg font-bold text-violet-400 mb-1 group-hover:opacity-80 transition-opacity">Ghost Songs</p>
-          <p className="text-sm text-white/40">Songs you loved and forgot.</p>
+          <p className="text-lg font-bold text-violet-400 mb-1 group-hover:opacity-80 transition-opacity">Songs</p>
+          <p className="text-sm text-white/40">Rising, timeless, fading, and forgotten.</p>
         </Link>
         <Link
-          href="/past-station"
+          href="/artists"
           className="rounded-2xl bg-white/5 hover:bg-white/10 transition-colors p-6 group"
         >
-          <p className="text-lg font-bold text-amber-400 mb-1 group-hover:opacity-80 transition-opacity">Past Station</p>
-          <p className="text-sm text-white/40">How your taste is shifting.</p>
+          <p className="text-lg font-bold text-amber-400 mb-1 group-hover:opacity-80 transition-opacity">Artists</p>
+          <p className="text-sm text-white/40">Rising, timeless, fading, and forgotten.</p>
         </Link>
       </div>
     </main>
