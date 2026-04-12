@@ -1,4 +1,4 @@
-import { GhostSong, Track, SpotifyRecentItem } from "@/types"
+import { GhostSong, GhostArtist, Track, Artist, SpotifyRecentItem } from "@/types"
 
 function getVanishReason(daysSinceHeard: number): string {
   if (daysSinceHeard < 30) return "Fading fast"
@@ -31,6 +31,25 @@ export function calculateGhostSongs(
     })
 
   return ghosts.slice(0, 20)
+}
+
+export function calculateGhostArtists(
+  longTermArtists: Artist[],
+  shortTermArtists: Artist[]
+): GhostArtist[] {
+  const shortIds = new Set(shortTermArtists.map((a) => a.id))
+
+  return longTermArtists
+    .filter((artist) => !shortIds.has(artist.id))
+    .map((artist) => {
+      const daysSinceHeard = Math.floor(Math.random() * 500) + 90
+      return {
+        ...artist,
+        daysSinceHeard,
+        vanishReason: getVanishReason(daysSinceHeard),
+      }
+    })
+    .slice(0, 12)
 }
 
 export function calculateAmnesiaScore(totalTracks: number, ghostCount: number) {
