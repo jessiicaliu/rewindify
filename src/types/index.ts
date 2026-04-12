@@ -43,6 +43,21 @@ export type AmnesiaScore = {
   ghostCount: number
 }
 
+// A single artist from Spotify
+export type Artist = {
+  id: string
+  name: string
+  image: string
+  genres: string[]
+  spotifyUrl: string
+}
+
+// A ghost artist — an Artist you used to love but drifted from
+export type GhostArtist = Artist & {
+  daysSinceHeard: number
+  vanishReason: string
+}
+
 // Raw track object as Spotify returns it
 export type SpotifyTrack = {
   id: string
@@ -57,4 +72,13 @@ export type SpotifyTrack = {
 export type SpotifyRecentItem = {
   track: SpotifyTrack
   played_at: string
+}
+
+// Raw artist object as Spotify returns it
+export type SpotifyArtist = {
+  id: string
+  name: string
+  images: { url: string }[]
+  genres: string[]
+  external_urls: { spotify: string }
 }
