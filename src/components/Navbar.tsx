@@ -1,13 +1,15 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { signOut } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 
 export default function Navbar() {
   const pathname = usePathname()
+  const { status } = useSession()
+  const isAuth = status === "authenticated"
 
   return (
-    <nav className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+    <nav className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black">
       <Link href="/" className="text-white font-bold tracking-tight">
         Rewindify
       </Link>
@@ -28,12 +30,14 @@ export default function Navbar() {
         >
           Past Station
         </Link>
-        <button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="text-sm text-white/40 hover:text-white transition-colors"
-        >
-          Sign out
-        </button>
+        {isAuth && (
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="text-sm text-white/40 hover:text-white transition-colors"
+          >
+            Sign out
+          </button>
+        )}
       </div>
     </nav>
   )
