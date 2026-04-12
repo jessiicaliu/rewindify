@@ -1,9 +1,10 @@
 import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { getTopTracks } from "@/lib/spotify"
 import { NextResponse } from "next/server"
 
 export async function GET(request: Request) {
-  const session = await getServerSession()
+  const session = await getServerSession(authOptions)
 
   if (!session?.accessToken) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 })

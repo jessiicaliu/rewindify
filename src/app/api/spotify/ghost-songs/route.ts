@@ -1,11 +1,12 @@
 import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import { getTopTracks, getRecentlyPlayed } from "@/lib/spotify"
 import { calculateGhostSongs, calculateAmnesiaScore } from "@/lib/ghost-algorithm"
 import { saveGhostSongs, getGhostSongs } from "@/lib/supabase"
 import { NextResponse } from "next/server"
 
 export async function GET() {
-  const session = await getServerSession()
+  const session = await getServerSession(authOptions)
 
   if (!session?.accessToken || !session?.user?.email) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
