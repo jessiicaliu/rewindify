@@ -1,11 +1,18 @@
-"use client"
-import { signIn } from "next-auth/react"
+import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation"
+import { authOptions } from "@/lib/auth"
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession(authOptions)
+
+  if (session) {
+    redirect("/past-station")
+  }
+
   return (
     <div>
       <h1>Rewindify</h1>
-      <button onClick={() => signIn("spotify")}>Connect Spotify</button>
+      <a href="/api/auth/signin/spotify">Connect Spotify</a>
     </div>
   )
 }
