@@ -7,6 +7,14 @@ declare module "next-auth" {
   }
 }
 
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken?: string
+    refreshToken?: string
+    accessTokenExpires?: number
+  }
+}
+
 // A single song/track from Spotify
 export type Track = {
   id: string
