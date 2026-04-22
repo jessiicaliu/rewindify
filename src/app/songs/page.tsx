@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 import { authOptions } from "@/lib/auth"
 import { getTopTracks, getRecentlyPlayed } from "@/lib/spotify"
 import { calculateGhostSongs, calculateAmnesiaScore } from "@/lib/ghost-algorithm"
+import { saveGhostSongs, getGhostSongs } from "@/lib/supabase"
 import EraCard from "@/components/ui/EraCard"
 import GhostSongsList from "@/components/GhostSongsList"
 import StatCard from "@/components/ui/StatCard"
@@ -31,7 +32,12 @@ export default async function SongsPage() {
   const timeless = longTerm.filter((t) => !mediumIds.has(t.id) && !shortIds.has(t.id))
   const fading = longTerm.filter((t) => mediumIds.has(t.id) && !shortIds.has(t.id))
 
-  const ghostSongs = calculateGhostSongs(longTerm, mediumTerm, recent)
+  const userId = session.user?.email ?? ""
+  let ghostSongs = await getGhostSongs(userId).catch(() => [])
+  if (ghostSongs.length === 0) {
+    ghostSongs = calculateGhostSongs(longTerm, mediumTerm, recent)
+    await saveGhostSongs(userId, ghostSongs).catch(() => {})
+  }
   const amnesiaScore = calculateAmnesiaScore(longTerm.length, ghostSongs.length)
 
   return (
