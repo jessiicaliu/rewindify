@@ -16,15 +16,24 @@ export function calculateGhostSongs(
   const recentIds = new Set(recentTracks.map((item) => item.track.id))
   const mediumIds = new Set(mediumTermTracks.map((t) => t.id))
 
+  const lastPlayedAt = new Map<string, string>()
+  for (const item of recentTracks) {
+    const id = item.track.id
+    if (!lastPlayedAt.has(id)) lastPlayedAt.set(id, item.played_at)
+  }
+
+  const now = Date.now()
+
   const ghosts = longTermTracks
     .filter((track) => mediumIds.has(track.id) && !recentIds.has(track.id))
     .map((track, index) => {
-      const daysSinceHeard = Math.floor(Math.random() * 500) + 90
+      const playedAt = lastPlayedAt.get(track.id)
+      const daysSinceHeard = playedAt
+        ? Math.floor((now - new Date(playedAt).getTime()) / 86_400_000)
+        : 50 // outside the 50-play window, so at least ~50 days
       return {
         ...track,
         peakPosition: index + 1,
-        peakDate: "2022",
-        totalPlays: Math.floor(Math.random() * 300) + 50,
         daysSinceHeard,
         vanishReason: getVanishReason(daysSinceHeard),
       }
@@ -41,14 +50,10 @@ export function calculateGhostArtists(
 
   return longTermArtists
     .filter((artist) => !shortIds.has(artist.id))
-    .map((artist) => {
-      const daysSinceHeard = Math.floor(Math.random() * 500) + 90
-      return {
-        ...artist,
-        daysSinceHeard,
-        vanishReason: getVanishReason(daysSinceHeard),
-      }
-    })
+    .map((artist) => ({
+      ...artist,
+      vanishReason: "Not in your recent rotation",
+    }))
     .slice(0, 12)
 }
 

@@ -15,8 +15,6 @@ export async function saveGhostSongs(userId: string, songs: GhostSong[]) {
     artist: song.artist,
     album_art: song.albumArt,
     peak_position: song.peakPosition,
-    peak_date: song.peakDate,
-    total_plays: song.totalPlays,
     days_since_heard: song.daysSinceHeard,
     vanish_reason: song.vanishReason,
     spotify_url: song.spotifyUrl,
@@ -47,8 +45,6 @@ export async function getGhostSongs(userId: string): Promise<GhostSong[]> {
     durationMs: 0,
     spotifyUrl: row.spotify_url,
     peakPosition: row.peak_position,
-    peakDate: row.peak_date,
-    totalPlays: row.total_plays,
     daysSinceHeard: row.days_since_heard,
     vanishReason: row.vanish_reason,
   }))

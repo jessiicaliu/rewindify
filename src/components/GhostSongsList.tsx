@@ -29,7 +29,7 @@ export default function GhostSongsList({ songs }: Props) {
             <p className="text-sm text-white/50 truncate">{song.artist}</p>
           </div>
           <div className="text-right shrink-0">
-            <p className="text-xs text-white/30">peaked #{song.peakPosition}</p>
+            <p className="text-xs text-white/30">#{song.peakPosition} all-time</p>
             <p className="text-xs text-white/20">{song.daysSinceHeard}d ago</p>
           </div>
         </a>

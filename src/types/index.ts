@@ -19,10 +19,8 @@ export type Track = {
 
 // A ghost song — a Track but with extra memory data
 export type GhostSong = Track & {
-  peakPosition: number // highest rank it ever hit
-  peakDate: string
-  totalPlays: number
-  daysSinceHeard: number
+  peakPosition: number // rank in long-term top tracks
+  daysSinceHeard: number // days since last seen in recently-played (50-play window)
   vanishReason: string
 }
 
@@ -54,7 +52,6 @@ export type Artist = {
 
 // A ghost artist — an Artist you used to love but drifted from
 export type GhostArtist = Artist & {
-  daysSinceHeard: number
   vanishReason: string
 }
 
